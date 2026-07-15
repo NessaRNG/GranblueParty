@@ -32,16 +32,31 @@ app.use(passport.initialize());
 import './passport-providers';
 
 // Make a hash from the DB version, to enable proper caching
-// Hash is updated automatically each time the file changes
 app.set('etag', false);
 let dbVersion;
 const dbVersionChanged = debounce(() => {
-  const hash = crypto.createHash('md5');
-  hash.update(fs.readFileSync(config.db.versionFile));
-  dbVersion = '"' + hash.digest('hex') + '"';
+  try {
+    if (fs.existsSync(config.db.versionFile)) {
+      const hash = crypto.createHash('md5');
+      hash.update(fs.readFileSync(config.db.versionFile));
+      dbVersion = '"' + hash.digest('hex') + '"';
+    } else {
+      dbVersion = '"default-db-version"';
+    }
+  } catch (e) {
+    dbVersion = '"default-db-version"';
+  }
 }, 500);
 dbVersionChanged(); // Read once on start
-fs.watch(config.db.versionFile, dbVersionChanged);
+
+// Disable fs.watch in Vercel/Production to prevent crash and lambda timeout
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    fs.watch(config.db.versionFile, dbVersionChanged);
+  } catch(e) {
+    // Ignore watch errors if file doesn't exist
+  }
+}
 
 app.get('*', (req, res, next) => {
   res.setHeader("Cache-Control", "public, max-age=3600");
