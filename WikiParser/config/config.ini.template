@@ -1,8 +1,9 @@
 [postgresql]
-host=localhost
-database=gbf
-user=pguser
-password=changeme
+host=db.xzjlgmuixpgugksgdkgj.supabase.co
+port=5432
+database=postgres
+user=postgres
+password=gbfkontol123_
 
 [path]
 frontend=Frontend
