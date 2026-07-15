@@ -2,10 +2,11 @@
 // Copy this file as config.js and fill in values, OR set env vars in Vercel dashboard
 
 const config = {
-  // CORS: set to your frontend Vercel URL
+  // CORS: set FRONTEND_URL to your full frontend Vercel URL (e.g. https://granblue.vercel.app)
+  // In production leave FRONTEND_PORT empty — port is not needed for Vercel URLs
   frontend: {
     url: process.env.FRONTEND_URL || 'http://localhost',
-    port: process.env.FRONTEND_PORT || 8080,
+    port: process.env.FRONTEND_PORT || (process.env.NODE_ENV === 'production' ? '' : 8080),
   },
   // Express port (not used in Vercel serverless, but kept for local dev)
   app: {

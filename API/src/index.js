@@ -15,8 +15,12 @@ import config from './config';
 const app = express();
 
 // Enable CORS
+const corsOrigin = config.frontend.port
+  ? config.frontend.url + ':' + config.frontend.port
+  : config.frontend.url;
+
 app.use(cors({
-  origin: config.frontend.url + ':' + config.frontend.port,
+  origin: corsOrigin,
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: true,
 }));
